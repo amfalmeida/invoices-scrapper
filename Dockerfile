@@ -11,8 +11,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY invoices ./invoices
 COPY run.py .
 
-RUN useradd --uid 1000 --create-home app && mkdir -p /data && chown app /data
-USER app
+# runs as root: Home Assistant owns /data (options.json) and /share, and a non-root user can't read or write them
+RUN mkdir -p /data
 VOLUME ["/data"]
 
 CMD ["python", "run.py"]

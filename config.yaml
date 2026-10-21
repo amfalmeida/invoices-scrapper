@@ -4,7 +4,7 @@
 # The add-on does one pass and exits. It is not scheduled here: start it from a Home Assistant
 # automation (see README).
 name: Invoices Scrapper
-version: "0.1.0"
+version: "0.1.1"
 url: "https://github.com/amfalmeida/invoices-scrapper"
 slug: invoices_scrapper
 description: Sends new invoices and receipts to mail-hawk (one pass per start)
