@@ -1,0 +1,51 @@
+# Home Assistant add-on manifest. Installed from the GitHub repository (see README); Home Assistant
+# pulls the image built by .github/workflows/build.yaml.
+#
+# The add-on does one pass and exits. It is not scheduled here: start it from a Home Assistant
+# automation (see README).
+name: Invoices Scrapper
+version: "0.1.0"
+url: "https://github.com/amfalmeida/invoices-scrapper"
+slug: invoices_scrapper
+description: Sends new invoices and receipts to mail-hawk (one pass per start)
+image: ghcr.io/amfalmeida/invoices-scrapper
+arch:
+  - amd64
+  - aarch64
+init: false          # run the container's CMD directly, no s6 supervisor
+startup: application
+boot: manual         # don't run on Home Assistant boot; the automation starts it
+map:
+  - share:rw         # /share on the host, outside the container, so state survives reinstalls
+options:
+  providers:
+    - lidl
+  timezone: Europe/Lisbon   # timezone for log timestamps
+  database_path: /share/invoices-scrapper/state.db   # sent invoices + Lidl token; keep it on /share
+  mailhawk_url: http://192.168.1.10:8081   # your mail-hawk, reachable from Home Assistant
+  mailhawk_api_key: ""
+  mailhawk_timeout: 30
+  lidl_refresh_token: ""   # from `make lidl-auth` on a desktop; the rotated token is kept in the database afterwards
+  lidl_language: pt
+  lidl_country: PT
+  lidl_entity_name: Lidl
+  lidl_app_version: ""
+  since_date: ""           # YYYY-MM-DD, skip older invoices
+  dry_run: false
+  log_level: info
+schema:
+  providers:
+    - list(lidl)
+  timezone: str
+  database_path: str
+  mailhawk_url: url
+  mailhawk_api_key: password
+  mailhawk_timeout: int(1,)
+  lidl_refresh_token: password?
+  lidl_language: str
+  lidl_country: str
+  lidl_entity_name: str
+  lidl_app_version: str?
+  since_date: match(^(\d{4}-\d{2}-\d{2})?$)?
+  dry_run: bool
+  log_level: list(debug|info|warning|error)

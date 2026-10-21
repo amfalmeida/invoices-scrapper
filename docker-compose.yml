@@ -1,0 +1,12 @@
+services:
+  invoices:
+    build: .
+    container_name: invoices-scrapper
+    # one pass per start; schedule it from outside (cron, or `docker compose run --rm invoices`)
+    restart: "no"
+    env_file: .env
+    volumes:
+      - ./data:/data
+    # lets MAILHAWK_URL=http://host.docker.internal:8081 reach a mail-hawk running on the host
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
